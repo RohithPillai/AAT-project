@@ -7,8 +7,9 @@ import html2text
 import re
 from bs4 import BeautifulSoup
 import os
-import wikiget
+import wikipedia
 import codecs
+import progressbar
 
 """ These following line will setup the Stanford Parser to be used
     with NLTK.
@@ -69,12 +70,7 @@ def parseThisSents (sentences):
         - html doc is of type <Unicode>
 """
 def getText(site):
-##    html = urllib2.urlopen(site).read()
-##    soup = BeautifulSoup(html,"html")
-##    txt = soup.get_text()
-    wki = wikiget.WikipediaFetcher()
-    txt = wki.wikigetcleanpage(site)
-##    print type(txt)
+    txt = wikipedia.page(site).content
     v = txt.split("\n")
     f = ""
     for i in v:
@@ -95,27 +91,30 @@ def getText(site):
                 sitelist is written to filename
 """
 
-def createfile(siteLists,st=0,filename = "Extracted_Noun_Verb_Phrases_Extra.txt"):
+def createfile(siteLists,st=0,filename = "Extracted_Noun_Verb_Phrases_wikipedia.txt"):
 
     #defaults to overwrite!!!!!
     if st == 0:
         fout = open(filename,'w')
     else:
         fout = open(filename,'a')
-
+    P = progressbar.ProgressBar(len(siteLists))
+    count = 0
     for site in siteLists:
         fout.write("@source: "+site+"\n")
         sentences = getText(site)
         phrases = parseThisSents (sentences)
         for NVphrase in phrases:
             fout.write(NVphrase.encode('utf-8')+"\n")
+        P.update(count)
+        count+=1
     fout.close()
 
 #Sound, Music, Birds_in_music, Vibrato, Onomatopoeia, Auditory_hallucination, Musical_ear_syndrome,
 # Motor_theory_of_speech_perception, Cocktail_party_effect, Dichotic_listening, Jingle
 def main():
-    createfile(["Vibrato","Onomatopoeia","Auditory_hallucination","Musical_ear_syndrome",
-"Motor_theory_of_speech_perception","Cocktail_party_effect","Dichotic_listening","Jingle"],1)
+    createfile(["Sound", "Music", "Birds_in_music","Vibrato","Onomatopoeia","Auditory_hallucination","Musical_ear_syndrome",
+"Motor_theory_of_speech_perception","Cocktail_party_effect","Dichotic_listening","Jingle"])
 
 #########################################################################
 
