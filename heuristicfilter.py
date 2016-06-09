@@ -1,6 +1,7 @@
 #Om Namo Narayanaya
 #Om Gum Ganapathaye Namo Namaha
 import progressbar
+import string
 
 """ Code complexity Work: O(n^2) """
 
@@ -25,21 +26,41 @@ fvnp = open("Extracted_Noun_Verb_Phrases_wikipedia.txt","r")
 
 # write to new file
 fout =  open("Cleaned_Norm_VPnNPs_wikipedia.txt","w")
-print lentot
-print filwrd
-##error()
 
 linevnp = fvnp.readline().lower()
 
 ##P = progressbar.ProgressBar(lentot)
 count = 0
+printable = set(string.printable)
+acceptable = set(string.printable)
+acceptable.update(['the','their','his','her'])
 
 while linevnp:
+
+    #clean all the unprintable characters like the greek alphabets etc, and other chars.
+
+    linevnp = filter(lambda x: x in printable, linevnp)
 
     if linevnp[0] == '@':
         fout.write(linevnp)
         linevnp = fvnp.readline().lower()
         continue
+    if len(linevnp.split()) == 0:
+        linevnp = fvnp.readline().lower()
+        continue
+    # filter out words like 'the' and 'a' if
+    #it is the very first word on the phrase
+
+    prev =''
+    curr = linevnp
+    while prev != curr and len(curr) != 0:
+        prev = curr
+        firstword = linevnp.split()[0]
+        if firstword in acceptable:
+            linevnp = " ".join(linevnp.split()[1:])
+        curr = linevnp
+
+
 
     removebool = False
     #remove words that are: is a prefix of words from filterwords
@@ -51,7 +72,7 @@ while linevnp:
 
 
     if not(removebool):
-        fout.write(linevnp.replace("=== ","").replace("== ",""))
+        fout.write(linevnp.replace("=== ","").replace("== ","").replace("===","").replace("==","").replace("=",""))
 
 
 
