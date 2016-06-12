@@ -10,6 +10,9 @@ import os
 import wikipedia
 import codecs
 import progressbar
+import logging
+
+logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
 """ These following line will setup the Stanford Parser to be used
     with NLTK.
@@ -76,9 +79,41 @@ def getText(site):
     for i in v:
         if "{" in i or "*" in i:
             continue
-        (m,g) = re.subn('\[\w*\]',' ',i)
-        f+=" "+m
-    return f.split(".")
+        
+        #better filter and isolation of words from special characters
+        regex = re.compile('[,\;\+\-\|\:\~\`\@\#\$\%\^\&\*\(\)\'\"\{\}\!\?\=\[\]1234567890]')
+
+        rep = {";":".",
+               ",":" , ",
+               " th ": "",
+               "-th ": "",
+               " th-": "",
+               "-th-": " ",
+               " st ": "",
+               "-st-": " ",
+               " st-": "",
+               "-st ": "",
+               " nd ": "",
+               "-nd ": "",
+               " rd ": "",
+               "-rd ": "",
+               " -":"",
+               "- ":"",
+               "°c":"",
+               "°f":"",
+               "'re":" are",
+               "'s":"",
+               "n't":" not"}
+        
+        rep = dict((re.escape(k), v) for k, v in rep.iteritems())
+        pattern = re.compile("|".join(rep.keys()))
+        text = pattern.sub(lambda m: rep[re.escape(m.group(0))], i)
+        
+        (m,_) = re.subn('\[\w*\]',' ',text)
+        (n,_) = re.subn(regex,'',m)
+        
+        f+=" "+n
+    return f.lower().split(".")
 
 
 
@@ -91,7 +126,7 @@ def getText(site):
                 sitelist is written to filename
 """
 
-def createfile(siteLists,st=0,filename = "Extracted_Noun_Verb_Phrases_wikipedia.txt"):
+def createfile(siteLists,st=0,filename = "Extracted_Noun_Verb_Phrases_wikipedianew.txt"):
 
     #defaults to overwrite!!!!!
     if st == 0:
@@ -101,6 +136,7 @@ def createfile(siteLists,st=0,filename = "Extracted_Noun_Verb_Phrases_wikipedia.
     P = progressbar.ProgressBar(len(siteLists))
     count = 0
     for site in siteLists:
+
         fout.write("@source: "+site+"\n")
         sentences = getText(site)
         phrases = parseThisSents (sentences)

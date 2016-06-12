@@ -17,15 +17,15 @@ while line:
 fil.close()
 
 # to get total nuber of lines in the file prior to reading line by line.
-with open('Extracted_Noun_Verb_Phrases_wikipedia.txt') as f:
+with open('Extracted_Noun_Verb_Phrases_wikipedianew.txt') as f:
     lentot = sum(1 for _ in f)
 f.close()
 
 #go through the NP and NPs
-fvnp = open("Extracted_Noun_Verb_Phrases_wikipedia.txt","r")
+fvnp = open("Extracted_Noun_Verb_Phrases_wikipedianew.txt","r")
 
 # write to new file
-fout =  open("Cleaned_Norm_VPnNPs_wikipedia.txt","w")
+fout =  open("Cleaned_Norm_VPnNPs_wikipedianew.txt","w")
 
 linevnp = fvnp.readline().lower()
 
@@ -33,7 +33,7 @@ linevnp = fvnp.readline().lower()
 count = 0
 printable = set(string.printable)
 acceptable = set(string.printable)
-acceptable.update(['the','their','his','her'])
+acceptable.update(['the','their','his','her','such'])
 
 while linevnp:
 
@@ -42,7 +42,7 @@ while linevnp:
     linevnp = filter(lambda x: x in printable, linevnp)
 
     if linevnp[0] == '@':
-        fout.write(linevnp)
+        #fout.write(linevnp)
         linevnp = fvnp.readline().lower()
         continue
     if len(linevnp.split()) == 0:
@@ -60,8 +60,7 @@ while linevnp:
             linevnp = " ".join(linevnp.split()[1:])
         curr = linevnp
 
-
-
+    
     removebool = False
     #remove words that are: is a prefix of words from filterwords
     for i in filwrd:
@@ -70,9 +69,12 @@ while linevnp:
         if linevnp.split()[:lengthi] == spliti:
             removebool = True
 
+   
 
     if not(removebool):
-        fout.write(linevnp.replace("=== ","").replace("== ","").replace("===","").replace("==","").replace("=",""))
+        wrl = linevnp.replace("\n","").replace("=== ","").replace("== ","").replace("===","").replace("==","").replace("=","").replace(" th ","").replace(" st ","")
+        if wrl != "":
+            fout.write(wrl+'\n')
 
 
 

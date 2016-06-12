@@ -1,5 +1,5 @@
-#Om Gum Ganapathaye Namo Namaha
 #Om Namo Narayanaya
+#Om Gum Ganapathaye Namo Namaha
 
 import random
 import numpy as np
@@ -18,9 +18,9 @@ class prog_state(object):
         self.countneg = 0
         self.readlines = []
 
-def main(count):
+def main(count,filen):
 
-    data = np.loadtxt("Cleaned_Norm_VPnNPs_wikipedia.txt",delimiter = '\t', dtype = str)
+    data = np.loadtxt(filen,delimiter = '\t', dtype = str)
 
     if "raw_cleaned_labeled_data.txt" in os.listdir(os.getcwd()):
         new = raw_input("Do you want to load from last time?(y/n):")
@@ -132,13 +132,14 @@ def main(count):
     print "exiting program"
 
 if __name__ == '__main__':
+
     if sys.argv[1:] == []:
-        count = 2
+        count = 2000
     else:
         count = int(sys.argv[1])
-
+    filename = "Cleaned_Norm_VPnNPs_wikipedianew_Half1st.txt"
     if raw_input("You have set count to:"+str(count) +". To continue press Enter, to cancel and exit press x now:") == 'x':
         print "exiting program"
         exit()
     else:
-        main(count)
+        main(count,filename)
