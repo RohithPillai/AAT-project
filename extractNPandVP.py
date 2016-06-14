@@ -74,15 +74,19 @@ def parseThisSents (sentences):
 """
 def getText(site):
     txt = wikipedia.page(site).content
-    v = txt.split("\n")
+    v = txt.lower().split("\n")
     f = ""
     for i in v:
         if "{" in i or "*" in i:
             continue
         
         #better filter and isolation of words from special characters
-        regex = re.compile('[,\;\+\-\|\:\~\`\@\#\$\%\^\&\*\(\)\'\"\{\}\!\?\=\[\]1234567890]')
-
+        regexnum = re.compile('[1234567890]')
+        regex = re.compile('[,\;\+\|\:\~\`\@\#\$\%\^\&\*\(\)\'\"\{\}\!\?\=\[\]]')
+        
+        (m,_) = re.subn('\[\w*\]',' ',i) # get rid of all notes citations e.g.'[1]'
+        (n,_) = re.subn(regexnum,'',m) #get rid of all numbers
+        
         rep = {";":".",
                ",":" , ",
                " th ": "",
@@ -99,21 +103,21 @@ def getText(site):
                "-rd ": "",
                " -":"",
                "- ":"",
-               "°c":"",
-               "°f":"",
+               " - ": "",
+               "--":"",
+               u"°c":"",
+               u"°f":"",
                "'re":" are",
                "'s":"",
                "n't":" not"}
         
         rep = dict((re.escape(k), v) for k, v in rep.iteritems())
         pattern = re.compile("|".join(rep.keys()))
-        text = pattern.sub(lambda m: rep[re.escape(m.group(0))], i)
+        text = pattern.sub(lambda m: rep[re.escape(m.group(0))], n) #get rid of specific substrings as above
         
-        (m,_) = re.subn('\[\w*\]',' ',text)
-        (n,_) = re.subn(regex,'',m)
-        
-        f+=" "+n
-    return f.lower().split(".")
+        (j,_) = re.subn(regex,'',text) #get rid of all special chars
+        f+=" "+j
+    return f.split(".")
 
 
 
