@@ -2,6 +2,8 @@
 #Om Gum Ganapathaye Namo Namaha
 import progressbar
 import string
+import subprocess
+import shlex
 
 """ Code complexity Work: O(n^2) """
 
@@ -60,7 +62,7 @@ while linevnp:
             linevnp = " ".join(linevnp.split()[1:])
         curr = linevnp
 
-    
+
     removebool = False
     #remove words that are: is a prefix of words from filterwords
     for i in filwrd:
@@ -69,19 +71,20 @@ while linevnp:
         if linevnp.split()[:lengthi] == spliti:
             removebool = True
 
-   
+
 
     if not(removebool):
         wrl = linevnp.replace("\n","").replace("=== ","").replace("== ","").replace("===","").replace("==","").replace("=","").replace(" th ","").replace(" st ","")
         if wrl != "":
-            fout.write(wrl+'\n')
+            fout.write(wrl.strip()+'\n')
 
 
 
-    linevnp = fvnp.readline().lower()
+    linevnp = fvnp.readline().lower().replace("th-","")
 ##    P.update(count)
     count +=1
 
 fout.close()
 fvnp.close()
-print "done!"
+
+print "run this in the cmd/terminal:\nsort C:\Users\\rohit\Documents\AAT\Cleaned_Norm_VPnNPs_wikipedianew.txt | uniq > C:\Users\\rohit\Documents\AAT\Cleaned_Norm_VPnNPs_wikipedianew_uniq.txt\n "
