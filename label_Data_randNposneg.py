@@ -18,6 +18,26 @@ class prog_state(object):
         self.countneg = 0
         self.readlines = []
 
+def exitformalities(PS):
+    print "\nsaving program state..."
+    pickle_out = open("saved_PS_labeldataprog","wb")
+    cPickle.dump(PS,pickle_out)
+    pickle_out.close()
+    print "done labelling",count,"Positive & Negative examples..."
+    print "here's a yoda :\n\t<{-_-}>"
+    print "exiting program"
+    exit()
+
+def getrand(a,c,t):
+    last = t-c
+    b = np.argsort(a)
+    if last < 0:
+        print "Read all instances in the data file..."
+        return None
+    num =  b[random.randint(0,last)]
+    a[num] = 1
+    return num
+
 def main(count,filen):
 
     data = np.loadtxt(filen,delimiter = '\t', dtype = str)
@@ -54,7 +74,7 @@ def main(count,filen):
                 PS = prog_state("raw_cleaned_labeled_data.txt",len(data))
                 PS.totseen = 0
                 PS.countpos, PS.countneg = 0,0
-                PS.readlines = []
+                PS.readlines = [0]*PS.datalen
             else:
                 print "exiting program......."
                 exit()
@@ -64,20 +84,27 @@ def main(count,filen):
         PS = prog_state("raw_cleaned_labeled_data.txt",len(data))
         PS.totseen = 0
         PS.countpos, PS.countneg = 0,0
-        PS.readlines = []
+        PS.readlines = [0]*PS.datalen
 
     lastline = PS.datalen -1
     print "How to use this program to label:"
     print "\ty - yes\n\tn - no\n\tk - skip the current example phrase\n\tc - edit the sentence. ONLY use to correct spacing errors in examples.\n\ts - save and exit the program\n"
 
     print "Please label the following:"
+
     while PS.countpos < count or PS.countneg < count  :
         print "\nState:\n Total Seen:",PS.totseen,"|| Total Labeled:",PS.countneg+PS.countpos,"|| Labeled Positive:",PS.countpos,"|| Labeled Negative:",PS.countneg
         #keep reading the file and writting
-        line = random.randint(1,lastline)
 
-        while line in PS.readlines:
-            line = random.randint(1,lastline)
+        ### Warning: This has the enourmos problem of an infinite loop if the
+        ### count > no. of instances of the data!!!!!
+        # line = random.randint(0,lastline)
+        # while line in PS.readlines:
+        #     line = random.randint(0,lastline)
+
+        line = getrand(PS.readlines,PS.totseen,lastline)
+        if line  == None:
+            exitformalities(PS)
 
         dataline = data[line]
         if dataline[0] == '@':
@@ -102,12 +129,7 @@ def main(count,filen):
             resp = raw_input("Enter (y/n/k and s to save and exit):")
 
         if resp == 's':
-            print "saving program state..."
-            pickle_out = open("saved_PS_labeldataprog","wb")
-            cPickle.dump(PS,pickle_out)
-            pickle_out.close()
-            print "exiting program......."
-            exit()
+            exitformalities(PS)
 
         elif resp == 'k':
             PS.totseen += 1
@@ -120,16 +142,9 @@ def main(count,filen):
             PS.countneg += 1
 
         PS.totseen += 1
-        PS.readlines += [line]
         fout.write(ans+'\t'+dataline+'\n')
 
-    print "\nsaving program state..."
-    pickle_out = open("saved_PS_labeldataprog","wb")
-    cPickle.dump(PS,pickle_out)
-    pickle_out.close()
-    print "done labelling",count,"Positive & Negative examples..."
-    print "here's a yoda :\n\t<{-_-}>"
-    print "exiting program"
+    exitformalities(PS)
 
 if __name__ == '__main__':
 
@@ -137,8 +152,8 @@ if __name__ == '__main__':
         count = 2000
     else:
         count = int(sys.argv[1])
-    filename = "Cleaned_Norm_VPnNPs_wikipedianew_Half1st.txt"
-    if raw_input("You have set count to:"+str(count) +". To continue press Enter, to cancel and exit press x now:") == 'x':
+    filename = "Cleaned_Norm_VPnNPs_wikipedianewuniq_Half1st.txt"
+    if raw_input("You have set count to: "+str(count) +". To continue press Enter, to cancel and exit press x now:") == 'x':
         print "exiting program"
         exit()
     else:
