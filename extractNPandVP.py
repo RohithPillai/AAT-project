@@ -1,5 +1,3 @@
-#Om Gum Ganapathaye Namo Namaha
-#Om Namo  Narayanaya
 
 from nltk.parse.stanford import StanfordParser
 import urllib2
