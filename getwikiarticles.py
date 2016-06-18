@@ -1,5 +1,3 @@
-#Om Gum Ganapathaye Namo Namaha
-#Om Namo  Narayanaya
 
 import re
 import wikipedia
@@ -47,8 +45,8 @@ def getText(site):
                "- ":"",
                " - ": "",
                "--":"",
-               u"°c":"",
-               u"°f":"",
+               u"Â°c":"",
+               u"Â°f":"",
                "'re":" are",
                "'s":"",
                "n't":" not"}
