@@ -87,6 +87,8 @@ def main(count,filen):
         PS.readlines = [0]*PS.datalen
 
     lastline = PS.datalen -1
+    onepers = 0.01*PS.datalen
+
     print "How to use this program to label:"
     print "\ty - yes\n\tn - no\n\tk - skip the current example phrase\n\tc - edit the sentence. ONLY use to correct spacing errors in examples.\n\ts - save and exit the program\n"
 
@@ -95,7 +97,8 @@ def main(count,filen):
     while PS.countpos < count or PS.countneg < count  :
         print "\nState:\n Total Seen:",PS.totseen,"|| Total Labeled:",PS.countneg+PS.countpos,"|| Labeled Positive:",PS.countpos,"|| Labeled Negative:",PS.countneg
         #keep reading the file and writting
-
+        perc = float(PS.totseen)*100 / PS.datalen
+        print " Percentage Done:", str(round(perc,2))+"%  #tillnextpercentage :",int(PS.datalen*0.01*(1-(perc-int(perc))))
         ### Warning: This has the enourmos problem of an infinite loop if the
         ### count > no. of instances of the data!!!!!
         # line = random.randint(0,lastline)
@@ -109,7 +112,7 @@ def main(count,filen):
         dataline = data[line]
         if dataline[0] == '@':
             dataline = data[line+(random.choice([1,-1]))]
-
+        print "-------------------------------------------------------------------------------------------------------------"
         print '\n'+dataline
         resp = raw_input("Enter (y/n/k and s to save and exit):")
         while resp not in ['y','n','k','s']:
@@ -143,6 +146,7 @@ def main(count,filen):
 
         PS.totseen += 1
         fout.write(ans+'\t'+dataline+'\n')
+        print "============================================================================================================="
 
     exitformalities(PS)
 
