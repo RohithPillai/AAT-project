@@ -29,7 +29,7 @@ my_path_to_jar3 = stanford_parser_dir  + "stanford-parser.jar"
 
 #######
 
-def parseThisSentsandWrite (target,sentences,fhand, model_fname='brown_model'):
+def parseThisSentsandWrite (target,sentences,fhand,finst, model_fname='wikipedia_modelshort'):
     model = word2vec.Word2Vec.load(model_fname)
 
     sen10ses = []
@@ -43,7 +43,7 @@ def parseThisSentsandWrite (target,sentences,fhand, model_fname='brown_model'):
     for i in range(len(A)):
         try:
             for B in A[i]:
-    ##            print B
+##                print B
 
                 #init. the sum vectors
                 Post = B.pos()
@@ -52,6 +52,7 @@ def parseThisSentsandWrite (target,sentences,fhand, model_fname='brown_model'):
                 V = np.zeros(300)
                 for (word, tag) in Post:
                     GenPos = tag[0]
+
                     if GenPos == 'J':
                         J  = np.add(np.array(model[word.replace(",","").replace(";","")]),J)
                     elif GenPos == 'N':
@@ -67,13 +68,15 @@ def parseThisSentsandWrite (target,sentences,fhand, model_fname='brown_model'):
                 vect_str = ",".join(vect_arrstr)
     ##            print type(target),type(vect_str)
                 fhand.write(target[i]+","+vect_str+"\n")
+                finst.write(sentences[i]+"\n")
         except:
+            print sentences[i]
             continue
 
 
-def getVec (filename):#, model):
+def getVec (filename,instfile):#, model):
 
-    logging.basicConfig(filename='example.log', filemode = 'w',
+    logging.basicConfig(filename='vectorize_half2.log', filemode = 'w',
                         format='%(asctime)s ::%(levelname)s:%(message)s',
                         level=logging.DEBUG,  datefmt='%m/%d/%Y %I:%M:%S %p')
 
@@ -81,20 +84,21 @@ def getVec (filename):#, model):
 
     target_data = np.loadtxt("raw_cleaned_labeled_data.txt",
                              usecols=[0],delimiter="\t",dtype = str)
-
+    
     sent_data = np.loadtxt("raw_cleaned_labeled_data.txt",
                            usecols=[1],delimiter="\t",dtype = str)
 
     fout = open (filename,"w")
-
+    finst = open(instfile,"w")
     logging.info('Number of vectors to make: '+str(len(target_data)))
-
-    parseThisSentsandWrite (target_data, sent_data,fout)#,model)
+##    print target_data[0],sent_data[1]
+    parseThisSentsandWrite (target_data, sent_data,fout,finst)#,model)
 
     logging.info('done: making vectors')
-
+    
     fout.close()
+    finst.close()
     print "done"
 
 if __name__ == '__main__':
-    getVec("labeled_vecData.txt")
+    getVec("labeled_vecData_half2.txt", "labeled_vecData_half2_instances.txt")
