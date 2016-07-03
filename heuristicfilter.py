@@ -1,5 +1,4 @@
-#Om Namo Narayanaya
-#Om Gum Ganapathaye Namo Namaha
+
 import progressbar
 import string
 import subprocess

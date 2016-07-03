@@ -1,5 +1,3 @@
-#Om Namo Narayanaya
-#Om Gum  Ganapathaye Namo Namaha
 
 import sys
 import time

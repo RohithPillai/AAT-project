@@ -1,5 +1,3 @@
-#Om Namo Narayanaya
-#Om Gum Ganapathaye Namo Namaha
 
 import random
 import numpy as np

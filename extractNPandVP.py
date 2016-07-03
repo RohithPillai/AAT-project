@@ -1,5 +1,3 @@
-#Om Gum Ganapathaye Namo Namaha
-#Om Namo  Narayanaya
 
 from nltk.parse.stanford import StanfordParser
 import urllib2
@@ -105,8 +103,8 @@ def getText(site):
                "- ":"",
                " - ": "",
                "--":"",
-               u"°c":"",
-               u"°f":"",
+               u"Â°c":"",
+               u"Â°f":"",
                "'re":" are",
                "'s":"",
                "n't":" not"}
